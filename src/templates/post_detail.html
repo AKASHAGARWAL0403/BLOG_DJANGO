@@ -1,18 +1,24 @@
-{% extends 'base.html' %}
-{% block title_content %}
-	Detail - {{ block.super }}
-{% endblock %}
+{% extends "base.html" %}
+
+{% block head_title %}
+
+{{ instance.title }} | {{ block.super }}
+
+{% endblock head_title %}
+
 
 {% block content %}
-	<h1>{{instance.title}}</h1>
 
-	{{ instance.title }}<br/>
+<div class='col-sm-6 col-sm-offset-3'>
 
-	{{ instance.content }}<br/>
+<h1>{{ instance.title }} <small>{{ instance.timestamp }}</small></h1>
 
-	{{ instance.timestamp }}<br/>
 
-	{{ instance.updated }}<br/>
 
-	{{ instance.id }}<br/>
-{% endblock %}
+{{ instance.content|linebreaks }}<br/>
+
+</div>
+
+
+
+{% endblock content %}

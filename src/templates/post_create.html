@@ -1,14 +1,19 @@
-{% extends 'base.html' %}
-{% block title_content %}
-	Create - {{ block.super }}
-{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-<form action='.' method='POST'>{% csrf_token %}
 
-	    {{ form.as_p }}
+<div class='col-sm-6 col-sm-offset-3'>
 
-	    <input type='submit' value='Save' />
+<h1>Form</h1>
 
-	</form>
-{% endblock %}
+<form method='POST' action=''>{% csrf_token %}
+
+{{ form.as_p }}
+
+<input type='submit' class='btn btn-default' value='Create Post' />
+
+</form>
+
+</div>
+
+{% endblock content %}
