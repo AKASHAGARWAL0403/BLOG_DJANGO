@@ -3,6 +3,7 @@ from django.http import HttpResponse , HttpResponseRedirect
 from django.shortcuts import render , get_object_or_404 , redirect
 from .models import Post
 from .forms import PostForm
+from django.core.paginator import Paginator
 
 def post_detail_view(request,id=None):
 	instance = get_object_or_404(Post,id=id)
@@ -26,9 +27,15 @@ def post_create_view(request,*args,**kwargs):
 
 
 def post_list_view(request,*args,**kwargs):
-	queryset = Post.objects.all()
+	queryset_post = Post.objects.all()
+	paginator = Paginator(queryset_post, 4)
+	page_request_var = 'page'
+	page = request.GET.get(page_request_var)
+	queryset = paginator.get_page(page)
 	context = {
-		"object_list" : queryset
+		"queryset" : queryset, 
+		"title" : "LIST",
+		"page_request_var" : page_request_var
 	}
 	return render(request,"post_list.html",context)
 
