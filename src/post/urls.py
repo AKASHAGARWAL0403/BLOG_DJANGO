@@ -1,4 +1,5 @@
-from django.urls import path,include
+from django.urls import include
+from django.conf.urls import url
 
 from .views import (
 	post_update_view,
@@ -11,9 +12,9 @@ from .views import (
 app_name = "post"
 
 urlpatterns = [
-	path('',post_list_view,name="list"),
-	path('<int:id>/delete/',post_delete_view,name="delete"),
-	path('create/',post_create_view,name="create"),
-	path('<int:id>/detail/',post_detail_view,name="detail"),
-	path('<int:id>/update/',post_update_view,name="update")
+	url(r'^$',post_list_view,name="list"),
+	url(r'^(?P<slug>[\w-]+)/delete/$',post_delete_view,name="delete"),
+	url(r'^create/$',post_create_view,name="create"),
+	url(r'^(?P<slug>[\w-]+)/$',post_detail_view,name="detail"),
+	url(r'^(?P<slug>[\w-]+)/update/$',post_update_view,name="update")
 ]
