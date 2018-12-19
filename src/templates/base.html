@@ -1,7 +1,9 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
 	<title>{% block title_content %}Blog{% endblock %}</title>
+	<link rel='stylesheet' href='{% static "css/base.css" %}' />
 </head>
 <body>
 {% include 'messages_display.html' %}
