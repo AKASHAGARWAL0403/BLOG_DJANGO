@@ -28,13 +28,24 @@ def post_detail_view(request,slug=None):
 		content_type = ContentType.objects.get(model=c_type)
 		object_id = form.cleaned_data.get('object_id')
 		content = form.cleaned_data.get('content')
+		parent_qs = None
+		try:
+			parent = int(request.POST.get('parent_id'))
+		except:
+			parent = None
+		if parent:
+			parent_obj = Comments.objects.filter(id = parent)
+			if parent_obj.exists() and parent_obj.count() == 1:
+				parent_qs = parent_obj.first()
+
 		new_comment , created = Comments.objects.get_or_create(
 									user = request.user,
 									content_type = content_type,
 									object_id = object_id,
-									content = content
+									content = content,
+									parent = parent_qs
 								)
-		form = form = CommentForm(None,initial=initial_data)
+		return HttpResponseRedirect(new_comment.content_object.get_absolute_url())
 
 	else:
 		print(form.errors)
