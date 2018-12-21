@@ -13,28 +13,25 @@
 	{% if instance.image %}
 		<img src='{{instance.image.url}}' class="img-responsive">
 	{% endif %}
-	<h1>{{ instance.title }} <small>{{ instance.timestamp }}</small></h1>
+	<h1>{{ instance.title }}
+		{% if instance.draft %}<span style="color:gray;font-size: 15px;margin-right: 15px">DRAFT</span>{% endif %}<small>{{ instance.publish }}</small></h1>
+		
 	{% if instance.user.get_full_name %}
 		<p>AUTHOR:{{ instance.user.get_full_name }}</p>
 	{% endif %}
 
-<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
-Facebook
-</a>
+<div class="fb-like" data-href="{{ request.build_absolute_uri }} data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
 
-<a href="https://twitter.com/home?status={{ share_string }}%20{{ request.build_absolute_uri }}">
-Twitter
-</a>
+<br><br>
 
-<a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'>
-
-<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ instance.title }}&summary={{ share_string }}&source={{ request.build_absolute_uri }}">
-Linkedin
-</a>
-
-<a href="http://www.reddit.com/submit?url={{ request.build_absolute_uri }}&title={{ share_string }}.">Reddit</a>
-
-
-{{ instance.content|linebreaks }}<br/>
+<div class='row'>
+	<div class='col-sm-12 '>
+		<div class="post-detail">{{ instance.get_markdown }}</div>
+		<hr/>
+		<br/>
+		<div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-numposts="5"></div>
+	</div>
 </div>
+</div>
+
 {% endblock content %}

@@ -2,23 +2,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{% block title_content %}Blog{% endblock %}</title>
+<title>{% block title_content %}Blog{% endblock %}</title>
 	
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
 
 
 <!-- Optional theme -->
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-	<link rel='stylesheet' href='{% static "css/base.css" %}' />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<link rel='stylesheet' href='{% static "css/base.css" %}' />
+{% block head_extra %}
+{% endblock head_extra %}
 </head>
 <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 {% include 'messages_display.html' %}
 <div class="container">
 {% block content %}
 {% endblock %}
 </div>
 </body>
+<script   src="http://code.jquery.com/jquery-1.12.2.min.js"   integrity="sha256-lZFHibXzMHo3GGeehn1hudTAP3Sc0uKXBXAzHX1sjtk="   crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js'></script>
+
+<script>
+	$(document).ready(function(){
+		$('.content-markdown').each(function(){
+			var content = $(this).text();
+			var marked_content = marked(content);
+			console.log(marked_content);
+			$(this).html(marked_content);
+		})
+
+		$('.post-detail img').each(function(){
+			$(this).addClass('img-responsive')
+		})
+
+		function title(html_text)
+		{
+			$('.preview-title').text(html_text)
+		}
+
+		function content(html_text)
+		{
+			html_text = marked(html_text)
+			$('.preview-content').html(html_text)
+			$('.preview-content img').each(function(){
+				$(this).addClass('img-responsive')
+			})
+		}
+
+		var id_title = $("#id_title")
+		var id_content = $("#id_content")
+		title(id_title.val())
+		content(id_content.val())
+		//console.log(id_title.val())
+		id_title.keyup(function(){
+			value = $(this).val()
+			console.log(value)
+			title(value)
+		})
+
+		id_content.keyup(function(){
+			value = $(this).val()
+			content(value)
+		})
+
+	})
+
+</script>
+
 </html>
