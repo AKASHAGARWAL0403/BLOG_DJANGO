@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'pagedown',
     'markdown_deux',
     'crispy_forms',
-
+    'comments',
     'post',
 ]
 

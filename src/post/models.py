@@ -7,6 +7,9 @@ from django.conf import settings
 from django.utils import timezone
 from markdown_deux import markdown
 from django.utils.safestring import mark_safe
+from comments.models import Comments
+from django.contrib.contenttypes.models import ContentType
+
 class PostManager(models.Manager):
 	def active(self,*args,**kwargs):
 		return super(PostManager,self).filter(draft=False).filter(publish__lte=timezone.now())
@@ -42,6 +45,18 @@ class Post(models.Model):
 
 	class Meta:
 		ordering = ['-timestamp','updated']
+
+	@property
+	def comment(self):
+		instance = self
+		qs = Comments.objects.filter_for_comment(instance)
+		return qs
+
+	@property
+	def get_content_type(self):
+		instance = self
+		qs = ContentType.objects.get_for_model(instance.__class__)
+		return qs
 # Create your models here.
 
 def create_slug(instance,new_slug=None):

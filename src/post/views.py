@@ -7,6 +7,9 @@ from django.core.paginator import Paginator
 from urllib.parse import quote_plus
 from django.utils import timezone
 from django.db.models import Q
+from comments.forms import CommentForm
+from django.contrib.contenttypes.models import ContentType
+from comments.models import Comments
 
 def post_detail_view(request,slug=None):
 	instance = get_object_or_404(Post,slug=slug)
@@ -14,9 +17,32 @@ def post_detail_view(request,slug=None):
 		if not request.user.is_staff or not request.user.is_superuser:
 			return Http404
 	share_string = quote_plus(instance.content)
+	comment = instance.comment
+	initial_data = {
+		"content_type": instance.get_content_type,
+		"object_id": int(instance.id)
+	}
+	form = CommentForm(request.POST or None,initial=initial_data)
+	if form.is_valid():
+		c_type  = form.cleaned_data.get('content_type')
+		content_type = ContentType.objects.get(model=c_type)
+		object_id = form.cleaned_data.get('object_id')
+		content = form.cleaned_data.get('content')
+		new_comment , created = Comments.objects.get_or_create(
+									user = request.user,
+									content_type = content_type,
+									object_id = object_id,
+									content = content
+								)
+		form = form = CommentForm(None,initial=initial_data)
+
+	else:
+		print(form.errors)
 	context = {
 		"instance"  : instance,
-		"share_string" : share_string
+		"share_string" : share_string,
+		"comments" : comment,
+		"form" : form
 	}
 	return render(request,"post_detail.html",context)
 
