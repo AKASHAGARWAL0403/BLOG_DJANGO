@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from comments.models import Comments
 
 def post_detail_view(request,slug=None):
+	today = timezone.now().date()
 	instance = get_object_or_404(Post,slug=slug)
 	if instance.draft or instance.publish > timezone.now().date():
 		if not request.user.is_staff or not request.user.is_superuser:
@@ -53,7 +54,8 @@ def post_detail_view(request,slug=None):
 		"instance"  : instance,
 		"share_string" : share_string,
 		"comments" : comment,
-		"form" : form
+		"form" : form,
+		"today" : today
 	}
 	return render(request,"post_detail.html",context)
 
@@ -88,7 +90,7 @@ def post_list_view(request,*args,**kwargs):
 							Q(user__last_name__icontains=query)
 						).distinct()
 
-	paginator = Paginator(queryset_post, 2)
+	paginator = Paginator(queryset_post, 4)
 	page_request_var = 'page'
 	page = request.GET.get(page_request_var)
 	queryset = paginator.get_page(page)

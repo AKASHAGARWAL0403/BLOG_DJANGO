@@ -41,7 +41,8 @@ class Post(models.Model):
 
 	def get_markdown(self):
 		context = self.content
-		return mark_safe(markdown(context))
+		marked_context = markdown(context)
+		return mark_safe(marked_context)
 
 	class Meta:
 		ordering = ['-timestamp','updated']

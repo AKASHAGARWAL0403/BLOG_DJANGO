@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-
+from django.urls import reverse
 
 # Create your models here.
 class CommentManager(models.Manager):
@@ -31,14 +31,20 @@ class Comments(models.Model):
 
 	objects = CommentManager()
 
-	class Meta:
-		ordering = ["-timestamp"]
-
 	def children(self):
 		return Comments.objects.filter(parent=self)
+
+	def get_absolute_url(self):
+		return reverse("comment:thread",kwargs={"id":self.id})
+
+	def get_delete_url(self):
+		return reverse("comment:delete",kwargs={"id":self.id})
 
 	@property
 	def is_parent(self):
 		if self.parent is not None:
 			return False
 		return True
+
+	class Meta:
+		ordering = ["-timestamp"]

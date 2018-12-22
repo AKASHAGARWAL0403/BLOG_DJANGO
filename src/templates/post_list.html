@@ -23,7 +23,7 @@
             {% if obj.draft %}<span style="color: gray">DRAFT</span>{% endif %}
             <small>{{ obj.publish }}</small></h3>
             {% if obj.publish > today %}<p>Future post</p>{% endif %}
-			<p><div class="post-detail">{{ obj.get_markdown|truncatechars_html:10 }}</div></p>
+			<p><div class="content-markdown">{{ obj.content|truncatechars_html:30 }}</div></p>
 			<p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a></p>
 			</div>
 		</div>

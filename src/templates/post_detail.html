@@ -15,7 +15,7 @@
 	{% endif %}
 	<h1>{{ instance.title }}
 		{% if instance.draft %}<span style="color:gray;font-size: 15px;margin-right: 15px">DRAFT</span>{% endif %}<small>{{ instance.publish }}</small></h1>
-		
+		 {% if instance.publish > today %}<p>Future post</p>{% endif %}
 	{% if instance.user.get_full_name %}
 		<p>AUTHOR:{{ instance.user.get_full_name }}</p>
 	{% endif %}
@@ -26,7 +26,7 @@
 
 <div class='row'>
 	<div class='col-sm-12 '>
-		<div class="post-detail">{{ instance.get_markdown }}</div>
+		<div class="content-markdown">{{ instance.content }}</div>
 		<hr/>
 		<br/>
 		<div>
@@ -39,18 +39,22 @@
 			{% for comment in comments %}
 	        <blockquote>
 	        	<p>{{ comment.content }}</p>
-				<footer>via {{ comment.user }} | {{ comment.timestamp|timesince }} ago</footer>
-				{% for child in comment.children %}
-					 <blockquote>
-	        			<p>{{ child.content }}</p>
-						<footer>via {{ child.user }} | {{ child.timestamp|timesince }} ago</footer>
-					</blockquote>
-				{% endfor %}
-				<form method="POST" action="."> {% csrf_token %}
-					{{ form|crispy }}
-					<input type='hidden' name='parent_id' value='{{ comment.id }}'>
-					<input type='submit' value='Reply' class='btn btn-default'>
-				</form>
+				<footer>via {{ comment.user }} | {{ comment.timestamp|timesince }} ago |
+					{% if comment.children.count > 0 %}{{ comment.children.count }} Comment{% if comment.children.count > 1 %}s{% endif %} | {% endif %} <a class='comment-reply-btn' href='#'>Reply</a> | <a  href='{{ comment.get_absolute_url }}'>Thread</a>
+				</footer>
+				<div class="comment-reply" style="display: none;">
+					{% for child in comment.children %}
+						 <blockquote>
+		        			<p>{{ child.content }}</p>
+							<footer>via {{ child.user }} | {{ child.timestamp|timesince }} ago</footer>
+						</blockquote>
+					{% endfor %}
+					<form method="POST" action="."> {% csrf_token %}
+						{{ form|crispy }}
+						<input type='hidden' name='parent_id' value='{{ comment.id }}'>
+						<input type='submit' value='Reply' class='btn btn-default'>
+					</form>
+				</div>
 			</blockquote>
 			<hr/>
 			{% endfor %}
