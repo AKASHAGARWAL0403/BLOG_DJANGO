@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from comments.models import Comments
 
 def post_detail_view(request,slug=None):
+	is_authenticated = request.user.is_authenticated
 	today = timezone.now().date()
 	instance = get_object_or_404(Post,slug=slug)
 	if instance.draft or instance.publish > timezone.now().date():
@@ -55,14 +56,13 @@ def post_detail_view(request,slug=None):
 		"share_string" : share_string,
 		"comments" : comment,
 		"form" : form,
-		"today" : today
+		"today" : today,
+		"is_authenticated" : is_authenticated
 	}
 	return render(request,"post_detail.html",context)
 
 
 def post_create_view(request,*args,**kwargs):
-	if not request.user.is_staff or not request.user.is_superuser:
-		return Http404
 	form = PostForm(request.POST or None , request.FILES or None)
 	if form.is_valid():
 		instance = form.save(commit=False)

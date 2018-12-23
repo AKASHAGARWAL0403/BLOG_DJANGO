@@ -4,8 +4,10 @@ from .forms import CommentForm
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.http import HttpResponseRedirect , Http404 , HttpResponse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+@login_required(login_url='/login/')
 def comment_delete_view(request,id):
 	try:
 		obj =  Comments.objects.get(id=id)

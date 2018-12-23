@@ -18,12 +18,16 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 
-
+from accounts.views import ( login_view , logout_view , register_view )
 urlpatterns = [
-	path('post/',include('post.urls')),
     path('comment/', include('comments.urls')),
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('login/',login_view),
+    path('logout/',logout_view),
+    path('register/',register_view),
+    path('',include('post.urls'))
 ]
+
 
 if settings.DEBUG:
 	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
