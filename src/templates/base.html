@@ -37,6 +37,15 @@
 
 {% include 'messages_display.html' %}
 <div class="container">
+	<ol class="breadcrumb">
+		<li><a href="/">Home</a></li>
+		{% if not request.user.is_authenticated %}
+			<li class="pull-right"><a href="/register">Register</a></li>
+			<li class="pull-right"><a href="/login">Login</a></li>
+		{% else %}
+			<li class="pull-right"><a href="/logout">Logout</a></li>
+		{% endif %}
+	</ol>
 {% block content %}
 {% endblock %}
 </div>
