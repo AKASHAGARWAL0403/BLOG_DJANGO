@@ -8,6 +8,9 @@
 <h1>{{ title }}</h1>
 <form method="GET" action="">
     <input type="text" name="q" placeholder="Search" value='{{ request.GET.q }}'>
+    {% if request.user.is_authenticated %}
+    <input type="checkbox" name="check" id="personal_blog" {% if request.GET.check %}checked{% endif %}><span>Personal Blog</span>
+    {% endif %}
     <input type="submit" name="submit">
 </form>
 {% for obj in queryset %}
@@ -37,8 +40,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if queryset.has_previous %}
-            <a href="?{{page_request_var}}=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; first</a>
-            <a href="?{{page_request_var}}={{ queryset.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+            <a href="?{{page_request_var}}=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.check %}&check={{ request.GET.check }}{% endif %}">&laquo; first</a>
+            <a href="?{{page_request_var}}={{ queryset.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.check %}&check={{ request.GET.check }}{% endif %}">previous</a>
         {% endif %}
 
         <span class="current">
@@ -46,8 +49,8 @@
         </span>
 
         {% if queryset.has_next %}
-            <a href="?{{page_request_var}}={{ queryset.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
-            <a href="?{{page_request_var}}={{ queryset.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">last &raquo;</a>
+            <a href="?{{page_request_var}}={{ queryset.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.check %}&check={{ request.GET.check }}{% endif %}">next</a>
+            <a href="?{{page_request_var}}={{ queryset.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.check %}&check={{ request.GET.check }}{% endif %}">last &raquo;</a>
         {% endif %}
     </span>
 </div>

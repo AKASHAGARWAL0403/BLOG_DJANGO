@@ -26,13 +26,17 @@ class UserRegisterForm(forms.ModelForm):
 	email2 = forms.EmailField(label='Confirm Email')
 	email = forms.EmailField(label='Email'),
 	password = forms.CharField(widget=forms.PasswordInput)
+	first_name = forms.CharField()
+	last_name = forms.CharField()
 	class Meta:
 		model = User
 		fields = [
 			'username',
 			'email',
 			'email2',
-			'password'
+			'password',
+			'first_name',
+			'last_name'
 		]
 	def clean_email2(self):
 		email = self.cleaned_data.get('email')

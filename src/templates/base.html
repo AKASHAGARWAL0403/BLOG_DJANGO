@@ -105,6 +105,11 @@
 			$(this).parent().next(".comment-reply").fadeToggle()
 		})
 
+		$('#personal_blog').on('change', function(e) {
+    		e.stopPropagation();
+    		this.value = this.checked ? 1 : 0;
+  		});
+
 	})
 
 </script>

@@ -9,10 +9,16 @@ from markdown_deux import markdown
 from django.utils.safestring import mark_safe
 from comments.models import Comments
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 class PostManager(models.Manager):
-	def active(self,*args,**kwargs):
-		return super(PostManager,self).filter(draft=False).filter(publish__lte=timezone.now())
+	def active(self,name,*args,**kwargs):
+		if name:
+			return super(PostManager,self).filter(
+											Q(draft=False,publish__lte=timezone.now())|
+											Q(user=name)).distinct()
+		else:
+			return super(PostManager,self).filter(draft=False).filter(publish__lte=timezone.now())
 
 def upload_location(instance,filename):
 	return "%s/%s" %(instance.slug,filename)

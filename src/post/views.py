@@ -10,12 +10,14 @@ from django.db.models import Q
 from comments.forms import CommentForm
 from django.contrib.contenttypes.models import ContentType
 from comments.models import Comments
+from django.contrib.auth.decorators import login_required
+from itertools import chain
 
 def post_detail_view(request,slug=None):
 	is_authenticated = request.user.is_authenticated
 	today = timezone.now().date()
 	instance = get_object_or_404(Post,slug=slug)
-	if instance.draft or instance.publish > timezone.now().date():
+	if (instance.draft or instance.publish > timezone.now().date()) and instance.user != request.user:
 		if not request.user.is_staff or not request.user.is_superuser:
 			return Http404
 	share_string = quote_plus(instance.content)
@@ -61,7 +63,7 @@ def post_detail_view(request,slug=None):
 	}
 	return render(request,"post_detail.html",context)
 
-
+@login_required(login_url='/login/')
 def post_create_view(request,*args,**kwargs):
 	form = PostForm(request.POST or None , request.FILES or None)
 	if form.is_valid():
@@ -78,17 +80,32 @@ def post_create_view(request,*args,**kwargs):
 
 def post_list_view(request,*args,**kwargs):
 	today = timezone.now().date()
-	queryset_post = Post.objects.active()
+	logged_user = None
+	if request.user.is_authenticated:
+		logged_user = request.user
+	queryset_post = Post.objects.active(logged_user)
 	if  request.user.is_staff or  request.user.is_superuser:
 		queryset_post = Post.objects.all()
 	query = request.GET.get('q')
-	if query:
+	check = request.GET.get('check')
+	print("checking",check)
+	if query and check:
+		queryset_post = queryset_post.filter(
+							Q(title__icontains=query)|
+							Q(content__icontains=query)|
+							Q(user__first_name__icontains=query)|
+							Q(user__last_name__icontains=query)
+						).filter(user=request.user).distinct()
+	elif query:
 		queryset_post = queryset_post.filter(
 							Q(title__icontains=query)|
 							Q(content__icontains=query)|
 							Q(user__first_name__icontains=query)|
 							Q(user__last_name__icontains=query)
 						).distinct()
+	elif check:
+		queryset_post = queryset_post.filter(user=request.user).distinct()
+
 
 	paginator = Paginator(queryset_post, 4)
 	page_request_var = 'page'
@@ -102,10 +119,11 @@ def post_list_view(request,*args,**kwargs):
 	}
 	return render(request,"post_list.html",context)
 
+@login_required(login_url='/login/')
 def post_update_view(request,slug=None):
-	if not request.user.is_staff or not request.user.is_superuser:
-		return Http404
 	instance  = get_object_or_404(Post,slug=slug)
+	if request.user != instance.user:
+		return Http404
 	form  = PostForm(request.POST or None, request.FILES or None ,instance=instance)
 	if form.is_valid():
 		instance = form.save(commit=False)
